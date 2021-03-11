@@ -678,6 +678,32 @@ bool ChatHandler::HandleNpcTextEmoteCommand(char* args)
     return true;
 }
 
+bool ChatHandler::HandleNpcThreatCommand(char* /*args*/)
+{
+    Creature* pCreature = GetSelectedCreature();
+
+    if (!pCreature)
+    {
+        SendSysMessage(LANG_SELECT_CHAR_OR_CREATURE);
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    PSendSysMessage("Creature: %s - Entry: %u", pCreature->GetName(), pCreature->GetEntry());
+
+    ThreatList const& tList = pCreature->GetThreatManager().getThreatList();
+    for (auto itr : tList)
+    {
+        Unit* unit = itr->getTarget();
+
+        if (unit)
+            PSendSysMessage("Player %s [guid: %u] has %f threat", unit->GetName(), unit->GetGUIDLow(), pCreature->GetThreatManager().getThreat(unit));
+    }
+
+    return true;
+}
+
+
 bool ChatHandler::HandleNpcWhisperCommand(char* args)
 {
     Player* target;

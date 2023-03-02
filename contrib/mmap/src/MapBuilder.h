@@ -71,6 +71,22 @@ namespace MMAP
         rcPolyMeshDetail* dmesh;
     };
 
+    struct mmOr
+    {
+        int map;
+        int tilex;
+        int tiley;
+        float minx;
+        float miny;
+        float minz;
+        float maxx;
+        float maxy;
+        float maxz;
+
+        int overrideAction; //1= force walkable;
+
+    };
+
     class MapBuilder
     {
         public:
@@ -100,6 +116,8 @@ namespace MMAP
             bool duDumpPolyMeshToObj(rcPolyMesh& pmesh, uint32 mapID, uint32 tileY, uint32 tileX);
             bool duDumpPolyMeshDetailToObj(rcPolyMeshDetail& dmesh, uint32 mapID, uint32 tileY, uint32 tileX);
 
+            std::list<mmOr> MmapOverrideList;
+
         private:
             // detect maps and tiles
             void discoverTiles();
@@ -121,6 +139,8 @@ namespace MMAP
             json getDefaultConfig();
             json getMapIdConfig(uint32 mapId);
             json getTileConfig(uint32 mapId, uint32 tileX, uint32 tileY);
+
+            int getOverride(uint32 mapID, float* pos);
 
             TerrainBuilder* m_terrainBuilder;
             TileList m_tiles;

@@ -29,6 +29,8 @@
 
 using namespace MMAP;
 
+list<mmOr> loadMmapOverrides(const char* overridesFilePath);
+
 bool checkDirectories(bool debugOutput)
 {
     vector<string> dirFiles;
@@ -253,8 +255,15 @@ int main(int argc, char** argv)
     if (!checkDirectories(debug))
         return silent ? -3 : finish("Press any key to close...", -3);
 
+
+
     MapBuilder builder(configInputPath, skipLiquid, skipContinents, skipJunkMaps,
                        skipBattlegrounds, debug, quick, offMeshInputPath);
+
+
+    builder.MmapOverrideList = loadMmapOverrides("mmapoverrides.txt");
+    printf("%u overrides loaded! \n", builder.MmapOverrideList.size());
+
 
     if (buildOnlyGameobjectModels)
         builder.buildTransports();
@@ -268,4 +277,50 @@ int main(int argc, char** argv)
         builder.buildTransports();
     }
     return silent ? 1 : finish("Movemap build is complete!", 1);
+}
+
+list<mmOr> loadMmapOverrides(const char* overridesFilePath)
+{
+    list<mmOr> overridelist;
+
+    // this shouldn't happen since the var is hardcoded :>
+    if (overridesFilePath == nullptr)
+        return overridelist;
+
+    FILE* fp = fopen(overridesFilePath, "rb");
+    if (!fp)
+    {
+        printf(" loadOverrides:: input file %s not found!\n", overridesFilePath);
+        return overridelist;
+    }
+
+    char* buf = new char[512];
+    mmOr OverrideAction;
+    while (fgets(buf, 512, fp))
+    {
+        printf("test");
+        float p0[3], p1[3];
+        int mid, tx, ty;
+        float size;
+        if (10 != sscanf(buf, "%d %d,%d (%f %f %f) (%f %f %f) %f", &mid, &tx, &ty,
+            &p0[0], &p0[1], &p0[2], &p1[0], &p1[1], &p1[2], &size))
+            continue;
+
+        OverrideAction.map = mid;
+        OverrideAction.tilex = tx;
+        OverrideAction.tiley = ty;
+        OverrideAction.minx = p0[0];
+        OverrideAction.miny = p0[1];
+        OverrideAction.minz = p0[2];
+        OverrideAction.maxx = p1[0];
+        OverrideAction.maxy = p1[1];
+        OverrideAction.maxz = p1[2];
+        OverrideAction.overrideAction = size;
+
+        overridelist.insert(overridelist.end(), OverrideAction);
+    }
+
+    delete[] buf;
+    fclose(fp);
+    return overridelist;
 }

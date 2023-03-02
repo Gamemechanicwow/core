@@ -724,14 +724,26 @@ namespace MMAP
                 unsigned char* areas = new unsigned char[tTriCount];
                 memset(areas, 0, tTriCount * sizeof(unsigned char));
                 float norm[3];
-                const float playerClimbLimit = cosf(52.0f/180.0f*RC_PI);
+                float playerClimbLimit = cosf(52.0f/180.0f*RC_PI);
                 const float maxClimbLimitTerrain = cosf(75.0f/180.0f*RC_PI);
                 const float maxClimbLimitVmaps = cosf(61.0f/180.0f*RC_PI);
                 for (int i = 0; i < tTriCount; ++i)
                 {
+                    float playerClimbLimit = cosf(52.0f / 180.0f * RC_PI);
                     const int* tri = &tTris[i*3];
                     calcTriNormal(&tVerts[tri[0]*3], &tVerts[tri[1]*3], &tVerts[tri[2]*3], norm);
                     bool terrain = meshData.IsTerrainTriangle(i);
+
+                    float verts[9];
+                    for (int c = 0; c < 3; ++c) // Corner
+                        for (int v = 0; v < 3; ++v) // Coordinate
+                            verts[3 * c + v] = (5 * tVerts[tri[c] * 3 + v] + tVerts[tri[(c + 1) % 3] * 3 + v] + tVerts[tri[(c + 2) % 3] * 3 + v]) / 7;
+                    int specialOverRide = getOverride(mapID, &verts[0]);
+                    if (specialOverRide == 1)
+                    {
+                        playerClimbLimit = cosf(82.0f / 180.0f * RC_PI);
+                    }
+
                     // 3.1 Check if the face is walkable: different angle for different type of triangle
                     // NPCs, charges, ... can climb up to the HardLimit
                     // blinks, randomPosGenerator ... can climb up to playerClimbLimit
@@ -1621,4 +1633,35 @@ namespace MMAP
 
         return config;
     }
+
+   //Retrieve the overrideaction for the coords
+    //overrideactions are defined in mmapoverrides.txt
+    //0 - no overrides - normal calc
+    //1 - NPCs should be able to move here. Increases climbdistances.
+        int MapBuilder::getOverride(uint32 mapID, float* pos)
+    {
+        float x = pos[2];
+        float y = pos[0];
+        float z = pos[1];
+
+        for (auto it = MmapOverrideList.begin(); it != MmapOverrideList.end(); ++it)
+        {
+            if (it->map != mapID)
+                continue;
+
+            //printf("%f %f %f \n", x, y, z);
+            if (it->minx<x && it->maxx>x)
+            {
+                if (it->miny<y && it->maxy>y)
+                {
+                    if (it->minz<z && it->maxz>z)
+                    {
+                        return it->overrideAction;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
 }

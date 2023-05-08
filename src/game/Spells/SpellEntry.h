@@ -451,7 +451,6 @@ namespace Spells
             // damage
             case SPELL_EFFECT_SCHOOL_DAMAGE:
             case SPELL_EFFECT_POWER_BURN:
-            case SPELL_EFFECT_HEALTH_LEECH:
             case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
             case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
             case SPELL_EFFECT_WEAPON_DAMAGE:

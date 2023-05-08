@@ -1505,6 +1505,17 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
 
         pCaster->DealSpellDamage(&damageInfo, true);
 
+        // Handle SPELL_EFFECT_HEALTH_LEECH effect based on dealt damage
+        for (int effectNumber = 0; effectNumber < MAX_EFFECT_INDEX; ++effectNumber)
+        {
+            if (m_spellInfo->Effect[effectNumber] == SPELL_EFFECT_HEALTH_LEECH)
+            {
+                //Todo: should some lifesteal items/effects gain +healing? Maybe prior to patch 1.7
+                // Patch 1.7.0 - All item based self heals will no longer be effected by equipment that provides bonuses to healing.
+                pCaster->DealHeal(pRealUnitCaster, ditheru(damageInfo.damage * m_spellInfo->EffectMultipleValue[effectNumber]), m_spellInfo);
+            }
+        }
+
         // Courroux Naturel a 20% de chance de faire proc WF.
         if (m_spellInfo->Id == 17364 && pCaster->IsPlayer())
         {

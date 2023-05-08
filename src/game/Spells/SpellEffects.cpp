@@ -2536,9 +2536,6 @@ void Spell::EffectHealthLeech(SpellEffectIndex effIndex)
     if (damage > static_cast<int32>(unitTarget->GetHealth()))
         damage = unitTarget->GetHealth();
 
-    if (m_casterUnit && m_casterUnit->IsAlive())
-        m_casterUnit->DealHeal(m_casterUnit, ditheru(damage * healMultiplier), m_spellInfo);
-
     // Non delayed spells bonus damage is added later
     if (!m_delayed)
         damage = initialDamage;

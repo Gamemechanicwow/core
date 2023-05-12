@@ -1032,10 +1032,11 @@ void Map::Visit(Cell const& cell, TypeContainerVisitor<T, CONTAINER>& visitor)
     uint32 const cell_x = cell.CellX();
     uint32 const cell_y = cell.CellY();
 
-    if (!cell.NoCreate() || loaded(GridPair(x,y)))
-    {
+    if (!cell.NoCreate())
         EnsureGridLoaded(cell);
-        getNGrid(x, y)->Visit(cell_x, cell_y, visitor);
-    }
+
+    NGridType* grid = getNGrid(x, y);
+    if (grid && grid->isGridObjectDataLoaded())
+        grid->Visit(cell_x, cell_y, visitor);
 }
 #endif

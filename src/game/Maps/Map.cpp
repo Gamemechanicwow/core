@@ -1019,8 +1019,6 @@ void Map::Update(uint32 t_diff)
                  visibilityUpdateTime, playersUpdateTime2, additionnalUpdateCounts, additionnalWaitTime,
                 packetBroadcastSlow ? "SLOWBCAST" : "");
 
-    printf("%i\n", updateMapTime);
-
     // Continent only
     if (IsContinent())
     {

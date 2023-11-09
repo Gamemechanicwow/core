@@ -4066,7 +4066,7 @@ void Unit::RemoveAllTemporaryAuras(AuraRemoveMode mode /*= AURA_REMOVE_BY_DEFAUL
 {
     for (SpellAuraHolderMap::iterator iter = m_spellAuraHolders.begin(); iter != m_spellAuraHolders.end();)
     {
-        if (!iter->second->IsPermanent())
+        if (!iter->second->IsPermanent() && !iter->second->GetCastItemGuid())
         {
             RemoveSpellAuraHolder(iter->second, mode);
             iter = m_spellAuraHolders.begin();

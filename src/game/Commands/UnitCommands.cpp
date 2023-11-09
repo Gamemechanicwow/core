@@ -979,6 +979,11 @@ bool ChatHandler::HandleUnAuraCommand(char* args)
         target->RemoveAllAuras();
         return true;
     }
+    if (argstr == "temp")
+    {
+        target->RemoveAllTemporaryAuras(AURA_REMOVE_BY_DEFAULT);
+        return true;
+    }
 
     // number or [name] Shift-click form |color|Hspell:spell_id|h[name]|h|r or Htalent form
     uint32 spellId = ExtractSpellIdFromLink(&args);

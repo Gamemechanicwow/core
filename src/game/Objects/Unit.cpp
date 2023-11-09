@@ -4062,6 +4062,21 @@ void Unit::RemoveAllNegativeAuras(AuraRemoveMode mode /*= AURA_REMOVE_BY_DEFAULT
     }
 }
 
+void Unit::RemoveAllTemporaryAuras(AuraRemoveMode mode /*= AURA_REMOVE_BY_DEFAULT*/)
+{
+    for (SpellAuraHolderMap::iterator iter = m_spellAuraHolders.begin(); iter != m_spellAuraHolders.end();)
+    {
+        if (!iter->second->IsPermanent())
+        {
+            RemoveSpellAuraHolder(iter->second, mode);
+            iter = m_spellAuraHolders.begin();
+        }
+        else
+            ++iter;
+    }
+}
+
+
 void Unit::RemoveAuraTypeOnDeath(AuraType auraType)
 {
     for (AuraList::const_iterator iter = m_modAuras[auraType].begin(); iter != m_modAuras[auraType].end();)

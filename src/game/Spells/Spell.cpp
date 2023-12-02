@@ -3525,6 +3525,16 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
             float waterLevel = pUnitTarget->GetTerrain()->GetWaterLevel(x, y, z, &ground);
             x += dis * cos(pUnitTarget->GetOrientation());
             y += dis * sin(pUnitTarget->GetOrientation());
+            Vector3 startPos = Vector3(srcX, srcY, srcZ);
+            Vector3 dstPos = Vector3(x, y, z);
+            Vector3 resultPos;
+            if (pUnitTarget->GetMap()->GetDynamicObjectHitPos(startPos, dstPos, resultPos, -0.1))
+            {
+                x = resultPos.x;
+                y = resultPos.y;
+                z = resultPos.z;
+            }
+
             // Underwater blink case
             if (waterLevel != VMAP_INVALID_HEIGHT_VALUE && waterLevel > ground)
             {
@@ -3542,15 +3552,14 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
                 if (!MapManager::IsValidMapCoord(pUnitTarget->GetMapId(), x, y, z))
                     break;
 
-                pUnitTarget->GetMap()->GetLosHitPosition(srcX, srcY, srcZ, x, y, z, -0.5f);
+                pUnitTarget->GetMap()->GetLosHitPosition(srcX, srcY, srcZ, x, y, z, -0.1f);
+
                 ground = pUnitTarget->GetMap()->GetHeight(x, y, z);
                 if (ground < z)
                 {
                     m_targets.setDestination(x, y, z);
                     break;
                 }
-                // If we are leaving water, rather use pathfinding, but increase z-range position research.
-                zSearchDist = 20.0f;
             }
             if (!pUnitTarget->GetMap()->GetWalkHitPosition(pUnitTarget->GetTransport(), srcX, srcY, srcZ, x, y, z, NAV_GROUND | NAV_WATER, zSearchDist, false))
             {

@@ -679,7 +679,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
             if (cleanDamage->hitOutCome == MELEE_HIT_PARRY || cleanDamage->hitOutCome == MELEE_HIT_DODGE)
             {
                 if (cleanDamage->damage && damagetype == DIRECT_DAMAGE && this != pVictim && IsPlayer() && (GetPowerType() == POWER_RAGE))
-                    ((Player*)this)->RewardRage(cleanDamage->damage*0.75, true);
+                    ((Player*)this)->RewardRage(cleanDamage->damage*0.75f, true);
             }
 
             // Damage received under shield for example.
@@ -6350,31 +6350,31 @@ float Unit::GetRegenHPPerSpirit() const
     switch (Class)
     {
         case CLASS_DRUID:
-            regen = (Spirit * 0.11 + 1);
+            regen = (Spirit * 0.11f + 1);
             break;
         case CLASS_HUNTER:
-            regen = (Spirit * 0.43 - 5.5);
+            regen = (Spirit * 0.43f - 5.5f);
             break;
         case CLASS_MAGE:
-            regen = (Spirit * 0.11 + 1);
+            regen = (Spirit * 0.11f + 1);
             break;
         case CLASS_PALADIN:
-            regen = (Spirit * 0.25);
+            regen = (Spirit * 0.25f);
             break;
         case CLASS_PRIEST:
-            regen = (Spirit * 0.15 + 1.4);
+            regen = (Spirit * 0.15f + 1.4f);
             break;
         case CLASS_ROGUE:
-            regen = (Spirit * 0.84 - 13);
+            regen = (Spirit * 0.84f - 13);
             break;
         case CLASS_SHAMAN:
-            regen = (Spirit * 0.28 - 3.6);
+            regen = (Spirit * 0.28f - 3.6f);
             break;
         case CLASS_WARLOCK:
-            regen = (Spirit * 0.12 + 1.5);
+            regen = (Spirit * 0.12f + 1.5f);
             break;
         case CLASS_WARRIOR:
-            regen = (Spirit * 1.26 - 22.6);
+            regen = (Spirit * 1.26f - 22.6f);
             break;
     }
 
@@ -6397,13 +6397,13 @@ float Unit::GetRegenMPPerSpirit() const
             addvalue = (Spirit / 5 + 15);
             break;
         case CLASS_MAGE:
-            addvalue = (Spirit / 4 + 12.5);
+            addvalue = (Spirit / 4 + 12.5f);
             break;
         case CLASS_PALADIN:
             addvalue = (Spirit / 5 + 15);
             break;
         case CLASS_PRIEST:
-            addvalue = (Spirit / 4 + 12.5);
+            addvalue = (Spirit / 4 + 12.5f);
             break;
         case CLASS_SHAMAN:
             addvalue = (Spirit / 5 + 17);

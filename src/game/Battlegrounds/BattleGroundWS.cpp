@@ -568,11 +568,9 @@ bool BattleGroundWS::HandleAreaTrigger(Player* source, uint32 trigger)
             }
 #endif
             return false;
-        /*case 3649:                                          // unk1
-          case 3688:                                          // unk2
-          case 4628:                                          // unk3
-          case 4629:                                          // unk4
-              break; */
+        case 3649:                                          // in mountains 
+        case 3688:                                          // ramp to horde base
+            return true; 
         default:
             sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "WARNING: Unhandled AreaTrigger in Battleground: %u", trigger);
             source->GetSession()->SendAreaTriggerMessage("Warning: Unhandled AreaTrigger in Battleground: %u", trigger);

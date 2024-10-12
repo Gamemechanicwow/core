@@ -1032,15 +1032,19 @@ bool PathInfo::UpdateForCaster(Unit* pTarget, float castRange)
                 pTarget->IsWithinLOS(m_pathPoints[i].x, m_pathPoints[i].y, m_pathPoints[i].z))
         {
             Vector3 startPoint = m_pathPoints[i - 1];
-            Vector3 endPoint = m_pathPoints[i];
-            Vector3 dirVect = endPoint - startPoint;
-            float targetDist1 = pTarget->GetDistance(m_pathPoints[i].x, m_pathPoints[i].y, m_pathPoints[i].z);
-            float targetDist2 = pTarget->GetDistance(m_pathPoints[i - 1].x, m_pathPoints[i - 1].y, m_pathPoints[i - 1].z);
-            if ((targetDist2 > targetDist1) && (targetDist2 > castRange))
+
+            float const targetDist1 = pTarget->GetDistanceSqr(m_pathPoints[i].x, m_pathPoints[i].y, m_pathPoints[i].z);
+            float const targetDist2 = pTarget->GetDistanceSqr(m_pathPoints[i - 1].x, m_pathPoints[i - 1].y, m_pathPoints[i - 1].z);
+            float const castRangeSquared = castRange * castRange;
+            if ((targetDist2 > targetDist1) && (targetDist2 > castRangeSquared))
             {
-                float nonInRangeDist = (targetDist2 - castRange / targetDist2 - targetDist1);
-                float directionLength = sqrt(dirVect.squaredLength());
-                // Thales not applicable but still a valid start point due to conditions.
+
+                Vector3 const endPoint = m_pathPoints[i];
+                Vector3 const dirVect = endPoint - startPoint;
+
+                float const nonInRangeDist = (targetDist2 - castRangeSquared / targetDist2 - targetDist1);
+                float const directionLength = dirVect.squaredLength();
+                // Thales theorem not applicable but still a valid start point due to conditions.
                 startPoint += dirVect * nonInRangeDist / directionLength;
             }
 
@@ -1054,7 +1058,6 @@ bool PathInfo::UpdateForCaster(Unit* pTarget, float castRange)
     }
     return false;
 }
-
 
 bool PathInfo::UpdateForMelee(Unit* pTarget, float meleeReach)
 {

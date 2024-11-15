@@ -72,7 +72,6 @@ void ExtractGameobjectModels()
 
         fixnamen((char*)path.c_str(), path.size());
         char* name = GetPlainName((char*)path.c_str());
-        fixname2(name, strlen(name));
 
         char const* ch_ext = GetExtension(name);
         if (!ch_ext)

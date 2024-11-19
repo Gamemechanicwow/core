@@ -64,7 +64,7 @@ MPQFile::MPQFile(const char* filename):
     eof(false),
     buffer(0),
     pointer(0),
-    size(0)
+    size(0), packedSize(0)
 {
     for (ArchiveSet::iterator i = gOpenArchives.begin(); i != gOpenArchives.end(); ++i)
     {
@@ -74,6 +74,8 @@ MPQFile::MPQFile(const char* filename):
         if (libmpq__file_number(mpq_a, filename, &filenum)) continue;
         libmpq__off_t transferred;
         libmpq__file_size_unpacked(mpq_a, filenum, &size);
+        libmpq__file_size_packed(mpq_a, filenum, &packedSize);
+
 
         // HACK: in patch.mpq some files don't want to open and give 1 for filesize
         if (size <= 1)

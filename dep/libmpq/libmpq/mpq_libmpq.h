@@ -75,6 +75,7 @@ class MPQFile
         bool eof;
         char* buffer;
         libmpq__off_t pointer, size;
+        libmpq__off_t packedSize;
 
         // disable copying
         MPQFile(const MPQFile& f) {}
@@ -85,6 +86,7 @@ class MPQFile
         ~MPQFile() { close(); }
         size_t read(void* dest, size_t bytes);
         size_t getSize() { return size; }
+        size_t getPackedSize() { return packedSize; }
         size_t getPos() { return pointer; }
         char* getBuffer() { return buffer; }
         char* getPointer() { return buffer + pointer; }

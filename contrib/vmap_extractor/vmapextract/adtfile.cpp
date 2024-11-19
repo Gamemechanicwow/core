@@ -93,9 +93,9 @@ ADTFile::ADTFile(char* filename): ADT(filename)
 
 bool ADTFile::init(uint32 map_num, uint32 tileX, uint32 tileY, StringSet& failedPaths)
 {
-    uint32 sz = ADT.getPackedSize();
 
-    printf("Debug %u %u %u %u\n", map_num, tileX, tileY, sz);
+
+    printf("Debug %u %u %u %u\n", map_num, tileX, tileY);
     return true;
 
     if (ADT.isEof())

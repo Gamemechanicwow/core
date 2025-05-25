@@ -36,90 +36,14 @@ void Ray::set(const Vector3& origin, const Vector3& direction) {
     c_yx = m_origin.x - ibyj * m_origin.y;
     c_yz = m_origin.z - kbyj * m_origin.y;
     c_zx = m_origin.x - ibyk * m_origin.z;
-    c_zy = m_origin.y - jbyk * m_origin.z;    
-    
-    //ray slope classification
-    if (m_direction.x < 0) {
-        if (m_direction.y < 0) {
-            if (m_direction.z < 0) {
-                classification = MMM;
-            } else if (m_direction.z > 0) {
-                classification = MMP;
-            } else { //(m_direction.z >= 0)
-                classification = MMO;
-            }
-        } else { //(m_direction.y >= 0)
-            if (m_direction.z < 0) {
-                if (m_direction.y == 0) {
-                    classification = MOM;
-                } else {
-                    classification = MPM;
-                }
-            } else { //(m_direction.z >= 0)
-                if ((m_direction.y == 0) && (m_direction.z == 0)) {
-                    classification = MOO;
-                } else if (m_direction.z == 0) {
-                    classification = MPO;
-                } else if (m_direction.y == 0) {
-                    classification = MOP;
-                } else {
-                    classification = MPP;
-                }
-            }
-        }
-    } else { //(m_direction.x >= 0)
-        if (m_direction.y < 0) {
-            if (m_direction.z < 0) {
-                if (m_direction.x == 0) {
-                    classification = OMM;
-                } else {
-                    classification = PMM;
-                }
-            } else { //(m_direction.z >= 0)
-                if ((m_direction.x == 0) && (m_direction.z == 0)) {
-                    classification = OMO;
-                } else if (m_direction.z == 0) {
-                    classification = PMO;
-                } else if (m_direction.x == 0) {
-                    classification = OMP;
-                } else {
-                    classification = PMP;
-                }
-            }
-        } else { //(m_direction.y >= 0)
-            if (m_direction.z < 0) {
-                if ((m_direction.x == 0) && (m_direction.y == 0)) {
-                    classification = OOM;
-                } else if (m_direction.x == 0) {
-                    classification = OPM;
-                } else if (m_direction.y == 0) {
-                    classification = POM;
-                } else {
-                    classification = PPM;
-                }
-            } else { //(m_direction.z > 0)
-                if (m_direction.x == 0) {
-                    if (m_direction.y == 0) {
-                        classification = OOP;
-                    } else if (m_direction.z == 0) {
-                        classification = OPO;
-                    } else {
-                        classification = OPP;
-                    }
-                } else {
-                    if ((m_direction.y == 0) && (m_direction.z == 0)) {
-                        classification = POO;
-                    } else if (m_direction.y == 0) {
-                        classification = POP;
-                    } else if (m_direction.z == 0) {
-                        classification = PPO;
-                    } else {
-                        classification = PPP;
-                    }
-                }
-            }            
-        }
-    }
+    c_zy = m_origin.y - jbyk * m_origin.z;
+
+    classification = static_cast<Classification>(
+        classifyComponent(m_direction.x) * 9 +
+        classifyComponent(m_direction.y) * 3 +
+        classifyComponent(m_direction.z));
+
+
 }
 
 

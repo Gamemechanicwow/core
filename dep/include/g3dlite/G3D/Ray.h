@@ -36,12 +36,49 @@ private:
     
     /** The following are for the "ray slope" optimization from
       "Fast Ray / Axis-Aligned Bounding Box Overlap Tests using Ray Slopes" 
-      by Martin Eisemann, Thorsten Grosch, Stefan MÅ¸ller and Marcus Magnor
+      by Martin Eisemann, Thorsten Grosch, Stefan M¬Å√ºller and Marcus Magnor
       Computer Graphics Lab, TU Braunschweig, Germany and
       University of Koblenz-Landau, Germany */
-    enum Classification {MMM, MMP, MPM, MPP, PMM, PMP, PPM, PPP, POO, MOO, OPO, OMO, OOP, OOM, OMM, OMP, OPM, OPP, MOM, MOP, POM, POP, MMO, MPO, PMO, PPO};    
-
+    enum Classification
+    {
+        MMM = 0,
+        MMO,
+        MMP,
+        MOM,
+        MOO,
+        MOP,
+        MPM,
+        MPO,
+        MPP,
+        OMM,
+        OMO,
+        OMP,
+        OOM,
+        OOO,
+        OOP,
+        OPM,
+        OPO,
+        OPP,
+        PMM,
+        PMO,
+        PMP,
+        POM,
+        POO,
+        POP,
+        PPM,
+        PPO,
+        PPP
+    };
     Classification classification;
+
+    inline int classifyComponent(float f)
+    {
+        if (f < 0.0f)
+            return 0; // M
+        if (f > 0.0f)
+            return 2; // P
+        return 1; // O
+    }
 
     /** ray slope */
     float ibyj, jbyi, kbyj, jbyk, ibyk, kbyi;

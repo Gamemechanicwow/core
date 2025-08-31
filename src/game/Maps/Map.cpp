@@ -3223,11 +3223,17 @@ bool Map::GetWalkHitPosition(GenericTransport* transport, float srcX, float srcY
         return false;
     }
 
+    //We started at a wall - no need to continue
+    if (t == 0)
+    {
+        return false;
+    }
+
     // We hit a wall - calculate new endposition
     if ((t < 1) && (t > 0))
     {
         for (int i = 0; i < 3; ++i)
-            endPosition[i] = point[i] + (endPosition[i] - point[i]) * hitNormal[i];
+            endPosition[i] = point[i] + (endPosition[i] - point[i]) * t;
     }
 
     if (dtStatusFailed(navMeshQuery->closestPointOnPoly(visited[visitedCount - 1], endPosition, endPosition, nullptr)))
@@ -3255,10 +3261,9 @@ bool Map::GetWalkHitPosition(GenericTransport* transport, float srcX, float srcY
     for (int i = 0; i < pointCount; ++i)
     {
         Vector3 startPos = dstPos;
-        dstPos = Vector3(pathPoints[i * VERTEX_SIZE + 2], pathPoints[i * VERTEX_SIZE], pathPoints[i * VERTEX_SIZE + 1]);
-        dstPos.z += 1.0f;
-        if (!transport && GetDynamicObjectHitPos(startPos, dstPos, dstPos, -0.1f))
-            break;
+        dstPos = Vector3(pathPoints[i * VERTEX_SIZE + 2], pathPoints[i * VERTEX_SIZE], pathPoints[i * VERTEX_SIZE + 1] + 1.0f);
+        if (!transport && GetDynamicObjectHitPos(startPos, dstPos, dstPos, -0.1f, false))
+            break;  
     }
     if (transport)
         transport->CalculatePassengerPosition(dstPos.x, dstPos.y, dstPos.z);
@@ -3435,10 +3440,10 @@ bool Map::ContainsGameObjectModel(const GameObjectModel &model) const
     return m_dynamicTree.contains(model);
 }
 
-bool Map::GetDynamicObjectHitPos(Movement::Vector3 start, Movement::Vector3 end, Movement::Vector3 &out, float finalDistMod) const
+bool Map::GetDynamicObjectHitPos(Movement::Vector3 start, Movement::Vector3 end, Movement::Vector3 &out, float finalDistMod, bool stopAtFirstHit) const
 {
     std::shared_lock<std::shared_timed_mutex> lock(m_dynamicTreeLock);
-    return m_dynamicTree.getObjectHitPos(start, end, out, finalDistMod);
+    return m_dynamicTree.getObjectHitPos(start, end, out, finalDistMod, stopAtFirstHit);
 }
 
 float Map::GetDynamicTreeHeight(float x, float y, float z, float maxSearchDist) const

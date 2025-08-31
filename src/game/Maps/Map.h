@@ -570,7 +570,7 @@ class Map : public GridRefManager<NGridType>
         void RemoveGameObjectModel(GameObjectModel const& model);
         void InsertGameObjectModel(GameObjectModel const& model);
         bool ContainsGameObjectModel(GameObjectModel const& model) const;
-        bool GetDynamicObjectHitPos(Vector3 start, Vector3 end, Vector3& out, float finalDistMod) const;
+        bool GetDynamicObjectHitPos(Vector3 start, Vector3 end, Vector3& out, float finalDistMod, bool stopAtFirstHit = true) const;
         float GetDynamicTreeHeight(float x, float y, float z, float maxSearchDist) const;
         bool CheckDynamicTreeLoS(float x1, float y1, float z1, float x2, float y2, float z2, bool ignoreM2Model) const;
         bool IsUnloading() const { return m_unloading; }

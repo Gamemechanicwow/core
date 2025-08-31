@@ -154,9 +154,9 @@ struct DynamicTreeIntersectionCallback
 {
     bool did_hit;
     DynamicTreeIntersectionCallback() : did_hit(false) {}
-    bool operator()(const G3D::Ray& r, GameObjectModel const& obj, float& distance, bool stopAtFirst, bool ignoreM2Model)
+    bool operator()(const G3D::Ray& r, GameObjectModel const& obj, float& distance, bool stopAtFirstHit, bool ignoreM2Model)
     {
-        did_hit = obj.intersectRay(r, distance, stopAtFirst, ignoreM2Model);
+        did_hit = obj.intersectRay(r, distance, stopAtFirstHit, ignoreM2Model);
         return did_hit;
     }
     bool didHit() const { return did_hit; }
@@ -207,11 +207,11 @@ If intersection is found within pMaxDist, sets pMaxDist to intersection distance
 Else, pMaxDist is not modified and returns false;
 */
 
-bool DynamicMapTree::getIntersectionTime(G3D::Ray const& ray, Vector3 const& endPos, float& pMaxDist) const
+bool DynamicMapTree::getIntersectionTime(G3D::Ray const& ray, Vector3 const& endPos, float& pMaxDist, bool stopAtFirst) const
 {
     float distance = pMaxDist;
     DynamicTreeIntersectionCallback callback;
-    impl.intersectRay(ray, callback, distance, endPos, false);
+    impl.intersectRay(ray, callback, distance, endPos, stopAtFirst, false);
     if (callback.didHit())
         pMaxDist = distance;
     return callback.didHit();
@@ -235,7 +235,7 @@ bool DynamicMapTree::getObjectHitPos(float x1, float y1, float z1, float x2, flo
 When moving from pos1 to pos2 check if we hit an object. Return true and the position if we hit one
 Return the hit pos or the original dest pos
 */
-bool DynamicMapTree::getObjectHitPos(Vector3 const& pPos1, Vector3 const& pPos2, Vector3& pResultHitPos, float pModifyDist) const
+bool DynamicMapTree::getObjectHitPos(Vector3 const& pPos1, Vector3 const& pPos2, Vector3& pResultHitPos, float pModifyDist, bool stopAtFirst) const
 {
     bool result = false;
     float maxDist = (pPos2 - pPos1).magnitude();
@@ -250,7 +250,7 @@ bool DynamicMapTree::getObjectHitPos(Vector3 const& pPos1, Vector3 const& pPos2,
     Vector3 dir = (pPos2 - pPos1) / maxDist;            // direction with length of 1
     G3D::Ray ray(pPos1, dir);
     float dist = maxDist;
-    if (getIntersectionTime(ray, pPos2, dist))
+    if (getIntersectionTime(ray, pPos2, dist, stopAtFirst))
     {
         pResultHitPos = pPos1 + dir * dist;
         if (pModifyDist < 0)

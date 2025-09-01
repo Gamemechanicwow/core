@@ -156,8 +156,10 @@ struct DynamicTreeIntersectionCallback
     DynamicTreeIntersectionCallback() : did_hit(false) {}
     bool operator()(const G3D::Ray& r, GameObjectModel const& obj, float& distance, bool stopAtFirstHit, bool ignoreM2Model)
     {
-        did_hit = obj.intersectRay(r, distance, stopAtFirstHit, ignoreM2Model);
-        return did_hit;
+        const bool hit = obj.intersectRay(r, distance, stopAtFirstHit, ignoreM2Model);
+        if (hit)
+            did_hit = true;
+        return stopAtFirstHit && hit;
     }
     bool didHit() const { return did_hit; }
 };

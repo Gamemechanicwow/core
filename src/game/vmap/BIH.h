@@ -141,7 +141,7 @@ class BIH
                         intervalMax = t2;
                     // intervalMax can only become smaller for other axis,
                     //  and intervalMin only larger respectively, so stop early
-                    if (intervalMax <= 0 || intervalMin >= maxDist)
+                    if (intervalMax < 0 || intervalMin > maxDist)
                         return;
                 }
             }
@@ -150,6 +150,8 @@ class BIH
                 return;
             intervalMin = std::max(intervalMin, 0.f);
             intervalMax = std::min(intervalMax, maxDist);
+            if (intervalMin > intervalMax)
+                return;
 
             uint32 offsetFront[3];
             uint32 offsetBack[3];

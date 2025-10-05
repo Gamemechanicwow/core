@@ -2405,6 +2405,11 @@ struct BroadcastGroupUpdateHelper
         // Visibilite des points de vie
         unit->ForceValuesUpdateAtIndex(UNIT_FIELD_HEALTH);
         unit->ForceValuesUpdateAtIndex(UNIT_FIELD_MAXHEALTH);
+        for (uint32 i = 0; i < MAX_POWERS; ++i)
+        {
+            unit->ForceValuesUpdateAtIndex(UNIT_FIELD_POWER1 + i);
+            unit->ForceValuesUpdateAtIndex(UNIT_FIELD_MAXPOWER1 + i);
+        }
     }
     Unit* source;
 };
@@ -2421,6 +2426,11 @@ void Group::BroadcastGroupUpdate()
             pp->ForceValuesUpdateAtIndex(UNIT_FIELD_FACTIONTEMPLATE);
             pp->ForceValuesUpdateAtIndex(UNIT_FIELD_HEALTH);
             pp->ForceValuesUpdateAtIndex(UNIT_FIELD_MAXHEALTH);
+            for (uint32 i = 0; i < MAX_POWERS; ++i)
+            {
+                pp->ForceValuesUpdateAtIndex(UNIT_FIELD_POWER1 + i);
+                pp->ForceValuesUpdateAtIndex(UNIT_FIELD_MAXPOWER1 + i);
+            }
             pp->CallForAllControlledUnits(BroadcastGroupUpdateHelper(pp), CONTROLLED_PET | CONTROLLED_GUARDIANS | CONTROLLED_CHARM | CONTROLLED_MINIPET | CONTROLLED_TOTEMS);
         }
     }

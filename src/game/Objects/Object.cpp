@@ -2147,17 +2147,13 @@ void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float 
 
     UpdateAllowedPositionZ(destX, destY, destZ);
     destZ += halfHeight;
-    bool colPoint = GetMap()->GetLosHitPosition(pos.x, pos.y, pos.z + halfHeight, destX, destY, destZ, -1.0f);
+    GetMap()->GetLosHitPosition(pos.x, pos.y, pos.z + halfHeight, destX, destY, destZ, -1.0f);
     destZ -= halfHeight;
-
-    if (colPoint)
-    {
-        dist = sqrt((pos.x - destX) * (pos.x - destX) + (pos.y - destY) * (pos.y - destY));
-    }
 
     GetMap()->GetLosHitPosition(destX, destY, destZ + halfHeight, destX, destY, destZ, -0.5f);
 
-    float step = dist / 10.0f;
+    float const stepX = (destX - pos.x) * 0.1f;
+    float const stepY = (destY - pos.y) * 0.1f;
     Position tempPos(destX, destY, destZ, 0.f);
     bool distanceZSafe = true;
     float previousZ = destZ;
@@ -2173,8 +2169,8 @@ void WorldObject::MovePositionToFirstCollision(Position& pos, float dist, float 
         }
 
         previousZ = destZ;
-        destX -= step * cos(angle);
-        destY -= step * sin(angle);
+        destX -= stepX;
+        destY -= stepY;
         UpdateAllowedPositionZ(destX, destY, destZ);
         if (fabs(previousZ - destZ) > (ATTACK_DISTANCE * 0.5f))
             distanceZSafe = false;
@@ -3054,9 +3050,7 @@ Creature* WorldObject::FindRandomCreature(uint32 entry, float range, bool alive,
     {
         if ((alive && !(*tIter)->IsAlive()) || (!alive && (*tIter)->IsAlive()))
         {
-            std::list<Creature*>::iterator tIter2 = tIter;
-            ++tIter;
-            targets.erase(tIter2);
+            tIter = targets.erase(tIter);
         }
         else
             ++tIter;
@@ -3066,13 +3060,7 @@ Creature* WorldObject::FindRandomCreature(uint32 entry, float range, bool alive,
     if (targets.empty())
         return nullptr;
 
-    // select random
-    uint32 rIdx = urand(0, targets.size() - 1);
-    std::list<Creature*>::const_iterator tcIter = targets.begin();
-    for (uint32 i = 0; i < rIdx; ++i)
-        ++tcIter;
-
-    return *tcIter;
+    return SelectRandomContainerElement(targets);
 }
 
 GameObject* WorldObject::FindNearestGameObject(uint32 entry, float range) const
@@ -3102,9 +3090,7 @@ GameObject* WorldObject::FindRandomGameObject(uint32 entry, float range) const
     {
         if (!(*tIter)->isSpawned())
         {
-            std::list<GameObject*>::iterator tIter2 = tIter;
-            ++tIter;
-            targets.erase(tIter2);
+            tIter = targets.erase(tIter);
         }
         else
             ++tIter;
@@ -3114,13 +3100,7 @@ GameObject* WorldObject::FindRandomGameObject(uint32 entry, float range) const
     if (targets.empty())
         return nullptr;
 
-    // select random
-    uint32 rIdx = urand(0, targets.size() - 1);
-    std::list<GameObject*>::const_iterator tcIter = targets.begin();
-    for (uint32 i = 0; i < rIdx; ++i)
-        ++tcIter;
-
-    return *tcIter;
+    return SelectRandomContainerElement(targets);
 }
 
 Player* WorldObject::FindNearestPlayer(float range) const
@@ -3272,24 +3252,18 @@ void WorldObject::GetFirstCollision(float dist, float angle, float &x, float &y,
     destz = fabs(ground - z) <= fabs(floor - z) ? ground : floor;
 
     // check static+dynamic collision
-    bool col = GetMap()->GetLosHitPosition(x, y, z + 0.5f, destx, desty, destz, -0.5f);
+    GetMap()->GetLosHitPosition(x, y, z + 0.5f, destx, desty, destz, -1.0f);
 
-    // Collided
-    if (col)
-    {
-        destx -= CONTACT_DISTANCE * cos(angle);
-        desty -= CONTACT_DISTANCE * sin(angle);
-        dist = sqrt((x - destx) * (x - destx) + (y - desty) * (y - desty));
-    }
-    float step = dist / 10.0f;
+    float const stepX = (destx - x) * 0.1f;
+    float const stepY = (desty - y) * 0.1f;
 
     for (uint8 j = 0; j < 10; ++j)
     {
         // do not allow too big z changes
         if (fabs(z - destz) > 6)
         {
-            destx -= step * cos(angle);
-            desty -= step * sin(angle);
+            destx -= stepX;
+            desty -= stepY;
             ground = GetMap()->GetHeight(destx, desty, MAX_HEIGHT, true);
             floor = GetMap()->GetHeight(destx, desty, z, true);
             destz = fabs(ground - z) <= fabs(floor - z) ? ground : floor;
